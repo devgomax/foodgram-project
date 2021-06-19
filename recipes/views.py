@@ -9,7 +9,7 @@ from django.shortcuts import render
 from sorl.thumbnail import delete, default
 
 from users.models import Follow
-from .forms import CreationForm
+from .forms import RecipeForm
 from .models import Cart, Composition, Favorites, Ingredient, Recipe, Tag
 
 User = get_user_model()
@@ -206,7 +206,7 @@ def ingredients(request):
 
 @login_required()
 def new_recipe(request):
-    form = CreationForm(request.POST or None, files=request.FILES or None)
+    form = RecipeForm(data=request.POST or None, files=request.FILES or None)
     context = {}
     if form.is_valid():
         context = save_recipe(request, form)
@@ -218,16 +218,16 @@ def new_recipe(request):
 
 @login_required()
 def edit_recipe(request, id):
-    recipe = get_object_or_404(Recipe, id=id)
-    if request.user != recipe.author:
-        return redirect('recipe_page', id=id)
+    recipe = get_object_or_404(Recipe, id=id, author=request.user)
     edit = True
     if request.method != 'POST':
-        form = CreationForm(instance=recipe)
+        form = RecipeForm(instance=recipe)
         return render(request, 'recipe_form.html', {'form': form,
                                                     'edit': edit,
                                                     'recipe_id': recipe.id})
-    form = CreationForm(request.POST, instance=recipe)
+    form = RecipeForm(data=request.POST or None,
+                      files=request.FILES or None,
+                      instance=recipe)
     context = {}
     if form.is_valid():
         context = save_recipe(request, form)
@@ -262,19 +262,7 @@ def get_form_ingredients(request):
 def save_recipe(request, form):
     recipe = form.save(commit=False)
     recipe.author = request.user
-    breakfast = request.POST.get('breakfast')
-    lunch = request.POST.get('lunch')
-    dinner = request.POST.get('dinner')
-    if not breakfast and not lunch and not dinner:
-        return {'tags_error': 'Обязательное поле'}
     recipe.save()
-    recipe.tags.clear()
-    if breakfast:
-        recipe.tags.add(Tag.objects.get(name='Завтрак'))
-    if lunch:
-        recipe.tags.add(Tag.objects.get(name='Обед'))
-    if dinner:
-        recipe.tags.add(Tag.objects.get(name='Ужин'))
     ingredients = get_form_ingredients(request)
     if not ingredients:
         return {'ings_error': 'Обязательное поле'}

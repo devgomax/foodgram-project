@@ -1,12 +1,14 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelMultipleChoiceField
 from sorl.thumbnail.fields import ImageFormField
 
-from .models import Recipe
+from .models import Ingredient, Recipe, Tag
 
 
-class CreationForm(ModelForm):
+class RecipeForm(ModelForm):
     image = ImageFormField()
+    tags = ModelMultipleChoiceField(queryset=Tag.objects.all(),
+                                    to_field_name='slug')
 
     class Meta:
         model = Recipe
-        fields = ['title', 'cooking_time', 'description', 'image']
+        fields = ['title', 'tags', 'cooking_time', 'description', 'image']

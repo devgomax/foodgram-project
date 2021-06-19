@@ -21,9 +21,9 @@ class CompositionInline(TabularInline):
 
 @admin.register(models.Tag)
 class TagAdmin(ModelAdmin):
-    list_display = ('id', 'name', 'color')
-    list_filter = ('name',)
-    search_fields = ('name',)
+    list_display = ('id', 'slug', 'name', 'color')
+    list_filter = ('name', 'slug')
+    search_fields = ('name', 'slug')
     readonly_fields = ('id',)
 
 

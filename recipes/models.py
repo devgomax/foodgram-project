@@ -20,13 +20,14 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     class Colors(models.TextChoices):
-        GREEN = 'green'
         ORANGE = 'orange'
+        GREEN = 'green'
         PURPLE = 'purple'
 
-    name = models.CharField(verbose_name='Тег',
+    name = models.CharField(verbose_name='Название',
                             max_length=100,
                             unique=True)
+    slug = models.SlugField(unique=True)
     color = models.CharField(verbose_name='Цвет',
                              max_length=10,
                              choices=Colors.choices,
