@@ -1,0 +1,36 @@
+{% url 'index' as index_url %}
+{% url 'password_change' as pass_change_url %}
+{% url 'logout' as logout_url %}
+{% url 'login' as login_url %}
+{% url 'signup' as signup_url %}
+{% url 'follows' as follows_url %}
+{% url 'favorites' as favorites_url %}
+{% url 'cart_page' as cart_url %}
+{% url 'new_recipe' as recipe_url %}
+
+<nav class="nav">
+    <div class="nav__container container">
+    {% if user.is_authenticated %}
+        <ul class="nav__items list">
+            <li class="nav__item {% if request.get_full_path == index_url %}nav__item_active{% endif %}"><a href="{{ index_url }}" class="nav__link link">Рецепты</a></li>
+            <li class="nav__item {% if request.get_full_path == follows_url %}nav__item_active{% endif %}"><a href="{{ follows_url }}" class="nav__link link">Мои подписки</a></li>
+            <li class="nav__item {% if request.get_full_path == recipe_url %}nav__item_active{% endif %}"><a href="{{ recipe_url }}" class="nav__link link">Создать рецепт</a></li>
+            <li class="nav__item {% if request.get_full_path == favorites_url %}nav__item_active{% endif %}"><a href="{{ favorites_url }}" class="nav__link link">Избранное</a></li>
+            <li class="nav__item {% if request.get_full_path == cart_url %}nav__item_active{% endif %}"><a href="{{ cart_url }}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ user.cart.count }}</span></li>
+        </ul>
+        <ul class="nav__items list">
+            <li class="nav__item"><a href="{% url 'password_change' %}" class="nav__link link">Изменить пароль</a></li>
+            <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link link">Выход</a></li>
+        </ul>
+    {% else %}
+        <ul class="nav__items list">
+            <li class="nav__item {% if request.get_full_path == index_url %}nav__item_active{% endif %}"><a href="{{ index_url }}" class="nav__link link">Рецепты</a></li>
+            <li class="nav__item nav__item_disabled"><a class="nav__link link">Список покупок</a></li>
+        </ul>
+        <ul class="nav__items list">
+            <li class="nav__item"><a href="{{ login_url }}" class="nav__link link">Войти</a></li>
+            <li class="nav__item"><a href="{{ signup_url }}" class="button button_style_blue">Создать аккаунт</a></li>
+        </ul>
+    {% endif %}
+    </div>
+</nav>

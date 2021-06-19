@@ -1,0 +1,12 @@
+<li class="shopping-list__item" data-id="{{ cart.recipe.id }}">
+    {% csrf_token %}
+    <div class="recipe recipe_reverse">
+        {% load thumbnail %}
+        {% thumbnail cart.recipe.image '90x90' crop='center' upscale=True as im %}
+            <img src="{{ im.url }}" alt="broken image" class="recipe__image recipe__image_big">
+        {% endthumbnail %}
+        <h3 class="recipe__title">{{ cart.recipe.title }}</h3>
+        <p class="recipe__text"><span class="icon-time"></span> {{ cart.recipe.cooking_time }} мин.</p>
+    </div>
+    <a href="#" class="shopping-list__button link">Удалить</a>
+</li>

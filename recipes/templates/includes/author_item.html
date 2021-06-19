@@ -1,0 +1,44 @@
+{% load user_filters %}
+{% csrf_token %}
+<div class="card-user" data-author="{{ author.id }}">
+    <div class="card-user__header">
+        <h2 class="card-user__title">{{ author.first_name }}</h2>
+    </div>
+    <div class="card-user__body">
+        <ul class="card-user__items">
+            {% if author.recipes.count < 4 %}
+                {% for recipe in author.recipes.all %}
+                    <li class="card-user__item">
+                        <div class="recipe">
+                            {% load thumbnail %}
+                            {% thumbnail recipe.image '72x72' crop='center' upscale=True as im  %}
+                                <img src="{{ im.url }}" alt="broken image" class="recipe__image">
+                            {% endthumbnail %}
+                            <h3 class="recipe__title">{{ recipe.title }}</h3>
+                            <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                {% for recipe in author.recipes.all|limit_query:3 %}
+                    <li class="card-user__item">
+                        <div class="recipe">
+                            {% load thumbnail %}
+                            {% thumbnail recipe.image '72x72' crop='center' upscale=True as im  %}
+                                <img src="{{ im.url }}" alt="broken image" class="recipe__image">
+                            {% endthumbnail %}
+                            <h3 class="recipe__title">{{ recipe.title }}</h3>
+                            <p class="recipe__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
+                        </div>
+                    </li>
+                {% endfor %}
+                    <li class="card-user__item">
+                        <a href="{% url 'profile' author.username %}" class="card-user__link link">Еще {{ author.recipes.count|diff:3 }} рецепт{{ author.recipes.count|diff:3|suffix }}...</a>
+                    </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="card-user__footer">
+        <button class="button button_style_light-blue button_size_auto" name="subscribe">Отписаться</button>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Ошибка 500. Сервер не отвечает{% endblock %}
+
+{% block link %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'pages/index.css' %}">
+{% endblock %}
+
+{% block main %}
+    <div class="custom-center-block">
+        <h1>Наш сервер не отвечает вам</h1>
+        <p class="custom-text-block">Какая-то операция на сервере выполняется неверно и мешает общению с вашим компьютером.</p>
+        <p class="custom-text-block">Попробуйте обновить страницу или обратиться позже.</p>
+        <div class="custom-button-block">
+            <form action="{% url 'index' %}">
+                <button class="button button_style_blue">Перейти на главную</button>
+            </form>
+        </div>
+    </div>
+{% endblock %
