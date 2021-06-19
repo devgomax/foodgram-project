@@ -12,11 +12,12 @@
     <div class="nav__container container">
     {% if user.is_authenticated %}
         <ul class="nav__items list">
-            <li class="nav__item {% if request.get_full_path == index_url %}nav__item_active{% endif %}"><a href="{{ index_url }}" class="nav__link link">Рецепты</a></li>
+            <li class="nav__item {% if 'recipes' in request.get_full_path %}nav__item_active{% endif %}"><a href="{{ index_url }}" class="nav__link link">Рецепты</a></li>
             <li class="nav__item {% if request.get_full_path == follows_url %}nav__item_active{% endif %}"><a href="{{ follows_url }}" class="nav__link link">Мои подписки</a></li>
             <li class="nav__item {% if request.get_full_path == recipe_url %}nav__item_active{% endif %}"><a href="{{ recipe_url }}" class="nav__link link">Создать рецепт</a></li>
-            <li class="nav__item {% if request.get_full_path == favorites_url %}nav__item_active{% endif %}"><a href="{{ favorites_url }}" class="nav__link link">Избранное</a></li>
-            <li class="nav__item {% if request.get_full_path == cart_url %}nav__item_active{% endif %}"><a href="{{ cart_url }}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ user.cart.count }}</span></li>
+            <li class="nav__item {% if 'favorites' in request.get_full_path %}nav__item_active{% endif %}"><a href="{{ favorites_url }}" class="nav__link link">Избранное</a></li>
+            {# кажется, этого нельзя добиться без изменения js кода, т.к. после удаления последней покупки js выставляет значение "0" без обновления страницы #}
+            <li class="nav__item {% if request.get_full_path == cart_url %}nav__item_active{% endif %}"><a href="{{ cart_url }}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{% if user.cart.count %}{{ user.cart.count }}{% endif %}</span></li>
         </ul>
         <ul class="nav__items list">
             <li class="nav__item"><a href="{% url 'password_change' %}" class="nav__link link">Изменить пароль</a></li>
@@ -24,7 +25,7 @@
         </ul>
     {% else %}
         <ul class="nav__items list">
-            <li class="nav__item {% if request.get_full_path == index_url %}nav__item_active{% endif %}"><a href="{{ index_url }}" class="nav__link link">Рецепты</a></li>
+            <li class="nav__item {% if 'recipes' in request.get_full_path %}nav__item_active{% endif %}"><a href="{{ index_url }}" class="nav__link link">Рецепты</a></li>
             <li class="nav__item nav__item_disabled"><a class="nav__link link">Список покупок</a></li>
         </ul>
         <ul class="nav__items list">

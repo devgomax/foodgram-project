@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport"
@@ -10,14 +10,15 @@
     </head>
     <body class="body">
         <header class="header">
-            {% include 'nav.html' %}
+            {# 3 базовых шаблона nav, footer, paginator и так находятся в папке includes, просто я изначально добавил путь к этой папке в settings)) изменил #}
+            {% include 'includes/nav.html' %}
         </header>
         <main class="main container">
             {% block main %}
             {% endblock %}
         </main>
         <footer class="footer">
-            {% include 'footer.html' %}
+            {% include 'includes/footer.html' %}
         </footer>
         {% block scripts %}{% endblock %}
     </body>

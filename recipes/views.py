@@ -8,9 +8,11 @@ from django.shortcuts import get_object_or_404, redirect
 from django.shortcuts import render
 from sorl.thumbnail import delete, default
 
+from foodgram.settings import DEFAULT_PAGINATION_NUMBER
 from users.models import Follow
 from .forms import RecipeForm
-from .models import Cart, Composition, Favorites, Ingredient, Recipe, Tag
+from .models import Cart, Composition, Favorites, Ingredient, Recipe
+from .utils import get_form_ingredients
 
 User = get_user_model()
 
@@ -39,7 +41,7 @@ def index(request):
         context['filters'] = tags_list
     else:
         recipes = Recipe.objects.all()
-    paginator = Paginator(recipes, 6)
+    paginator = Paginator(recipes, DEFAULT_PAGINATION_NUMBER)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     context['page'] = page
@@ -74,7 +76,7 @@ def profile(request, username):
         context['filters'] = tags_list
     else:
         recipes = author.recipes.all()
-    paginator = Paginator(recipes, 6)
+    paginator = Paginator(recipes, DEFAULT_PAGINATION_NUMBER)
     context['author'] = author
     context['paginator'] = paginator
     context['follow_exists'] = False
@@ -90,7 +92,7 @@ def profile(request, username):
 @login_required()
 def follows(request):
     authors = User.objects.filter(followings__follower=request.user)
-    paginator = Paginator(authors, 6)
+    paginator = Paginator(authors, DEFAULT_PAGINATION_NUMBER)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(request,
@@ -122,19 +124,22 @@ def purchases(request):
 
 @login_required()
 def delete_purchase(request, id):
-    if Cart.objects.filter(recipe__id=id, user=request.user).exists():
-        Cart.objects.filter(recipe__id=id, user=request.user).delete()
+    deleted, rows = Cart.objects.filter(
+        recipe__id=id, user=request.user
+    ).delete()
+    if deleted:
         return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+    else:
+        return JsonResponse({'success': False})
 
 
 @login_required()
 def new_subscription(request):
     id = json.loads(request.body).get('id')
-    if request.user.id == int(id):
+    author = User.objects.get(id=id)
+    if request.user == author:
         return JsonResponse({'success': False,
                              'error': 'cannot follow yourself'})
-    author = User.objects.get(id=id)
     Follow.objects.create(follower=request.user, author=author)
     return JsonResponse({'success': True})
 
@@ -142,10 +147,13 @@ def new_subscription(request):
 @login_required()
 def delete_subscription(request, id):
     author = User.objects.get(id=id)
-    if Follow.objects.filter(follower=request.user, author=author).exists():
-        Follow.objects.filter(follower=request.user, author=author).delete()
+    deleted, rows = Follow.objects.filter(
+        follower=request.user, author=author
+    ).delete()
+    if deleted:
         return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+    else:
+        return JsonResponse({'success': False})
 
 
 @login_required()
@@ -177,7 +185,7 @@ def favorites(request):
             context['filters'] = tags_list
         else:
             recipes = Recipe.objects.filter(favorites__user=user)
-        paginator = Paginator(recipes, 6)
+        paginator = Paginator(recipes, DEFAULT_PAGINATION_NUMBER)
         page_number = request.GET.get('page')
         page = paginator.get_page(page_number)
         context['paginator'] = paginator
@@ -187,10 +195,13 @@ def favorites(request):
 
 @login_required()
 def delete_favorites(request, id):
-    if Favorites.objects.filter(user=request.user, recipe__id=id).exists():
-        Favorites.objects.filter(user=request.user, recipe__id=id).delete()
+    deleted, rows = Favorites.objects.filter(
+        user=request.user, recipe__id=id
+    ).delete()
+    if deleted:
         return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+    else:
+        return JsonResponse({'success': False})
 
 
 def ingredients(request):
@@ -247,16 +258,6 @@ def delete_recipe(request, id):
         recipe.delete()
         default.kvstore.cleanup()
     return redirect('index')
-
-
-def get_form_ingredients(request):
-    ingredients = {}
-    post_body = request.POST
-    for key, name in post_body.items():
-        if key.startswith('nameIngredient'):
-            num = key.split('_')[1]
-            ingredients[name] = post_body.get(f'valueIngredient_{num}')
-    return ingredients
 
 
 def save_recipe(request, form):

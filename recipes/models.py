@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from sorl.thumbnail import ImageField
+from django.core.validators import MinValueValidator
 
 
 class Ingredient(models.Model):
@@ -63,7 +64,8 @@ class Recipe(models.Model):
                                   verbose_name='Теги',
                                   related_name='tags')
     cooking_time = models.PositiveSmallIntegerField(
-        verbose_name='Время приготовления'
+        verbose_name='Время приготовления',
+        validators=[MinValueValidator(1)]
     )
     created = models.DateTimeField(verbose_name='Дата публикации',
                                    auto_now_add=True,
@@ -85,8 +87,11 @@ class Composition(models.Model):
     ingredient = models.ForeignKey(Ingredient,
                                    verbose_name='Ингредиент',
                                    on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField(verbose_name='Количество',
-                                                default=1)
+    quantity = models.PositiveSmallIntegerField(
+        verbose_name='Количество',
+        validators=[MinValueValidator(1)],
+        default=1
+    )
 
 
 class Favorites(models.Model):

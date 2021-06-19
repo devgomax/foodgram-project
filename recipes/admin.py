@@ -16,7 +16,8 @@ class TabularInline(AdminImageMixin, admin.TabularInline):
 
 class CompositionInline(TabularInline):
     model = models.Composition
-    extra = 1
+    extra = 0
+    min_num = 2
 
 
 @admin.register(models.Tag)
@@ -39,13 +40,17 @@ class IngredientAdmin(ModelAdmin):
 @admin.register(models.Recipe)
 class RecipeAdmin(ModelAdmin):
     list_display = ('id', 'title', 'description', 'author', 'cooking_time',
-                    'created')
+                    'count_favorites', 'created')
     list_filter = ('author', 'title', 'cooking_time', 'created',)
     search_fields = ('author', 'title', 'description', 'cooking_time')
     date_hierarchy = 'created'
-    list_display_links = ('title',)
+    list_display_links = ('id', 'title',)
     readonly_fields = ('id', 'created',)
     inlines = [CompositionInline]
+
+    @admin.display(description='Кол-во добавлений в избранное')
+    def count_favorites(self, obj):
+        return models.Favorites.objects.filter(recipe=obj).count()
 
 
 @admin.register(models.Favorites)
