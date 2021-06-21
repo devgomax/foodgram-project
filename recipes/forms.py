@@ -1,7 +1,7 @@
 from django.forms import ModelForm, ModelMultipleChoiceField
 from sorl.thumbnail.fields import ImageFormField
 
-from .models import Ingredient, Recipe, Tag
+from .models import Recipe, Tag
 
 
 class RecipeForm(ModelForm):
