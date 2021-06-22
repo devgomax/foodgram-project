@@ -251,10 +251,12 @@ def delete_recipe(request, id):
 def save_recipe(request, form):
     recipe = form.save(commit=False)
     recipe.author = request.user
-    recipe.save()
     ingredients = get_form_ingredients(request)
     if not ingredients:
         return {'ings_error': 'Обязательное поле'}
+    if ingredients == 'failed':
+        return {'ings_error': 'Недопустимое значение'}
+    recipe.save()
     compositions = []
     Composition.objects.filter(recipe=recipe).delete()
     for title, quantity in ingredients.items():

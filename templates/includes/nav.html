@@ -12,7 +12,7 @@
     <div class="nav__container container">
     {% if user.is_authenticated %}
         <ul class="nav__items list">
-            <li class="nav__item {% if 'recipes' in request.get_full_path %}nav__item_active{% endif %}"><a href="{{ index_url }}" class="nav__link link">Рецепты</a></li>
+            <li class="nav__item {% if request.get_full_path == index_url or index_url|add:'/?' in request.get_full_path %}nav__item_active{% endif %}"><a href="{{ index_url }}" class="nav__link link">Рецепты</a></li>
             <li class="nav__item {% if request.get_full_path == follows_url %}nav__item_active{% endif %}"><a href="{{ follows_url }}" class="nav__link link">Мои подписки</a></li>
             <li class="nav__item {% if request.get_full_path == recipe_url %}nav__item_active{% endif %}"><a href="{{ recipe_url }}" class="nav__link link">Создать рецепт</a></li>
             <li class="nav__item {% if 'favorites' in request.get_full_path %}nav__item_active{% endif %}"><a href="{{ favorites_url }}" class="nav__link link">Избранное</a></li>

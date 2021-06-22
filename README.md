@@ -13,6 +13,8 @@
         DB_HOST=db
         DB_PORT=5432
         SECRET_KEY={type the secret key for django settings.py}
+        EMAIL_HOST_USER={your email server a.k.a test@gmail.com}
+        EMAIL_HOST_PASSWORD={your email server's password}
      ```
 - create directory ```/static/``` with static files for django
 - create directory ```/media/``` with media files for django
