@@ -31,7 +31,7 @@ class TagAdmin(ModelAdmin):
 @admin.register(models.Ingredient)
 class IngredientAdmin(ModelAdmin):
     list_display = ('id', 'title', 'dimension',)
-    list_filter = ('title',)
+    list_filter = ('dimension',)
     search_fields = ('title',)
     readonly_fields = ('id',)
     inlines = [CompositionInline]
@@ -41,7 +41,7 @@ class IngredientAdmin(ModelAdmin):
 class RecipeAdmin(ModelAdmin):
     list_display = ('id', 'title', 'description', 'author', 'cooking_time',
                     'count_favorites', 'created')
-    list_filter = ('author', 'title', 'cooking_time', 'created',)
+    list_filter = ('cooking_time', 'created',)
     search_fields = ('author', 'title', 'description', 'cooking_time')
     date_hierarchy = 'created'
     list_display_links = ('id', 'title',)

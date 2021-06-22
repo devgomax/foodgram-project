@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator
 
 class Ingredient(models.Model):
     title = models.CharField(verbose_name='Название',
-                             max_length=50)
+                             max_length=80)
     dimension = models.CharField(verbose_name='Единицы измерения',
                                  max_length=50)
 
