@@ -18,6 +18,8 @@ services:
     volumes:
       - static_value:/code/static/
       - media_value:/code/media/
+    ports:
+      - "587"
     depends_on:
       - db
     env_file:
