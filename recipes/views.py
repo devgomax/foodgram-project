@@ -25,25 +25,11 @@ def server_error(request):
     return render(request, 'misc/500.html', status=500)
 
 
-def get_tags_filter(params, context):
-    tags_list = params.split(',')
-    names_list = []
-    if 'break' in tags_list:
-        names_list.append('Завтрак')
-    if 'lunch' in tags_list:
-        names_list.append('Обед')
-    if 'dinner' in tags_list:
-        names_list.append('Ужин')
-    context['filters'] = tags_list
-    return names_list
-
-
 def index(request):
-    query_params = request.GET.get('filter')
-    context = {}
-    if query_params:
-        names_list = get_tags_filter(query_params, context)
-        recipes = list(set(Recipe.objects.filter(tags__name__in=names_list)))
+    tags_list = request.GET.getlist('filter')
+    context = {'filters': tags_list}
+    if tags_list:
+        recipes = Recipe.objects.filter(tags__slug__in=tags_list).distinct()
     else:
         recipes = Recipe.objects.all()
     paginator = Paginator(recipes, DEFAULT_PAGINATION_NUMBER)
@@ -66,11 +52,10 @@ def get_recipe(request, id):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    query_params = request.GET.get('filter')
-    context = {}
-    if query_params:
-        names_list = get_tags_filter(query_params, context)
-        recipes = list(set(author.recipes.filter(tags__name__in=names_list)))
+    tags_list = request.GET.getlist('filter')
+    context = {'filters': tags_list}
+    if tags_list:
+        recipes = author.recipes.filter(tags__slug__in=tags_list).distinct()
     else:
         recipes = author.recipes.all()
     paginator = Paginator(recipes, DEFAULT_PAGINATION_NUMBER)
@@ -165,12 +150,11 @@ def favorites(request):
         return JsonResponse({'success': True})
     elif request.method == 'GET':
         user = request.user
-        query_params = request.GET.get('filter')
-        context = {}
-        if query_params:
-            names_list = get_tags_filter(query_params, context)
-            recipes = list(set(Recipe.objects.filter(tags__name__in=names_list,
-                                                     favorites__user=user)))
+        tags_list = request.GET.getlist('filter')
+        context = {'filters': tags_list}
+        if tags_list:
+            recipes = Recipe.objects.filter(tags__slug__in=tags_list,
+                                            favorites__user=user).distinct()
         else:
             recipes = Recipe.objects.filter(favorites__user=user)
         paginator = Paginator(recipes, DEFAULT_PAGINATION_NUMBER)

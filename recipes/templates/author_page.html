@@ -12,7 +12,7 @@
     {% csrf_token %}
     <div class="main__header">
         <h1 class="main__title">{{ author.first_name }}</h1>
-        {% include 'includes/filter_tags.html' %}
+        {% include 'includes/filter_tags.html' with filters=filters %}
     </div>
     {% if user != author and user.is_authenticated %}
         <div class="author-subscribe" data-author="{{ author.id }}">
