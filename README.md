@@ -3,7 +3,6 @@
 ## Author: @devgomax
 ### Techs: Postgresql, Django + Gunicorn, Nginx
 ## Website - www.devgomax.gq
-## С тегами баг у меня не воспроизводится, проверяли друзья на 4х компах. Значит дело во фронте (а это уже работа фронтендеров - подгонять под конкретные браузеры)
 ### Server deployment instructions:
 - create ```.env``` file to the project's root directory with the next lines:
      ```
